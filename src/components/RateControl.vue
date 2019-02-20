@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { RATE } from "@/constants/controlValues";
+
 export default {
     props: {
         setInstanceRate: { type: Function, required: true }
@@ -23,7 +25,7 @@ export default {
 
     data() {
         return {
-            rate: 1
+            rate: RATE
         };
     },
 

@@ -5,6 +5,7 @@
         </label>
 
         <select
+            v-model="selectedVoice"
             name="voice-select"
             class="form-control"
             @change="setSelectedVoice"
@@ -27,6 +28,8 @@ export default {
 
     data() {
         return {
+            selectedVoice: "Alex",
+
             /**
              * NOTE: on page load and via development, getVoices will not have yet loaded.
              * Initializing the voices array with "getVoices" for HMR

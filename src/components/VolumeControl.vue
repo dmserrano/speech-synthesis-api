@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { VOLUME } from "@/constants/controlValues";
+
 export default {
     props: {
         setInstanceVolume: { type: Function, required: true }
@@ -23,7 +25,7 @@ export default {
 
     data() {
         return {
-            volume: .5
+            volume: VOLUME
         };
     },
 

@@ -56,7 +56,8 @@
 </template>
 
 <script>
-import { findVoice } from "./services/speech";
+import { createUtterance, findVoice } from "./services/speech";
+import { PITCH, RATE, TEXT, VOICE, VOLUME } from "./constants/controlValues";
 
 import PitchControl from "./components/PitchControl";
 import RateControl from "./components/RateControl";
@@ -78,40 +79,51 @@ export default {
 	data() {
 		return {
 			isSpeaking: false,
-			synthInstance: new SpeechSynthesisUtterance()
-		};
-	},
-
-	mounted() {
-		// Set listeners to toggle the "Speak" buttons disabled attribute
-		this.synthInstance.addEventListener("start", () => this.setIsSpeaking(true));
-		this.synthInstance.addEventListener("end", () => this.setIsSpeaking(false));
-
-		// Set event listener for speech synthesis errors
-		this.synthInstance.addEventListener("error", (event) => {
-  			alert(`An error has occurred with the speech synthesis: ${event.error}`);
-		});
-
-		this.synthInstance.onerror = function(event) {
-			console.log("An error has occurred with the speech synthesis: ", event.error);
+			instancePitch: PITCH,
+			instanceRate: RATE,
+			instanceText: TEXT,
+			instanceVoice: findVoice(VOICE),
+			instanceVolume: VOLUME,
+			synthInstance: null,
 		};
 	},
 
 	methods: {
-		setInstanceText({ target }) {
-			this.synthInstance.text = target.value;
+		setInstance() {
+			this.synthInstance = createUtterance();
+			this.setInstanceListeners();
+			this.synthInstance.pitch = this.instancePitch;
+			this.synthInstance.rate = this.instanceRate;
+			this.synthInstance.text = this.instanceText;
+			this.synthInstance.voice = this.instanceVoice;
+			this.synthInstance.volume = this.instanceVolume;
+		},
+
+		setInstanceListeners() {
+			// Set listeners to toggle the "Speak" buttons disabled attribute
+			this.synthInstance.addEventListener("start", () => this.setIsSpeaking(true));
+			this.synthInstance.addEventListener("end", () => this.setIsSpeaking(false));
+
+			// Set event listener for speech synthesis errors
+			this.synthInstance.addEventListener("error", (event) => {
+				alert(`An error has occurred with the speech synthesis: ${event.error}`);
+			});
 		},
 
 		setInstancePitch(pitch) {
-			this.synthInstance.pitch = pitch;
+			this.instancePitch = pitch;
 		},
 
 		setInstanceRate(rate) {
-			this.synthInstance.rate = rate;
+			this.instanceRate = rate;
+		},
+
+		setInstanceText({ target }) {
+			this.instanceText = target.value;
 		},
 
 		setInstanceVolume(volume) {
-			this.synthInstance.volume = volume;
+			this.instanceVolume = volume;
 		},
 
 		setIsSpeaking(value) {
@@ -119,15 +131,16 @@ export default {
 		},
 
 		setSelectedVoice({ target }) {
-			this.synthInstance.voice = findVoice(target.value);
+			this.instanceVoice = findVoice(target.value);
 		},
 
 		speak() {
 			if (this.isSpeaking) return;
-			else if (!this.synthInstance.text) {
+			else if (!this.instanceText) {
 				return alert("Please enter some text to speak.");
 			}
 
+			this.setInstance();
 			speechSynthesis.speak(this.synthInstance);
 		}
 	}

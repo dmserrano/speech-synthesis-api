@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { PITCH } from "@/constants/controlValues";
+
 export default {
     props: {
         setInstancePitch: { type: Function, required: true }
@@ -23,7 +25,7 @@ export default {
 
     data() {
         return {
-            pitch: 1
+            pitch: PITCH
         };
     },
 
